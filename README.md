@@ -2,7 +2,7 @@
 
 Export gifs from telegram
 
-**WARNING: this program uses a hack to get older gifs not visible from the client: it temporarily removes newer gifs to get older ones. If something goes wrong (for example if program gets killed, power goes off or internet disconnects), removed gifs will be lost**
+**WARNING: this program uses a hack to get older gifs not visible from client: it temporarily removes newer gifs to get older ones. If something goes wrong (for example if program gets killed, power goes off or internet disconnects), removed gifs will be lost.**
 
 ## Installation
 
@@ -14,16 +14,16 @@ sudo install telegram-export-gifs /usr/local/bin
 ## Usage
 
 ```text
-usage: telegram-export-gifs [-h|--help] [-d|--directory "<value>"] [--app-id
-                            <integer>] [--app-hash "<value>"]
+usage: telegram-export-gifs [-h] [-d DIRECTORY] [--app-id APP_ID] [--app-hash APP_HASH]
 
-                            Export gifs from telegram
+Export saved gifs from telegram.
 
-Arguments:
+options:
+  -h, --help            Show this help message and exit
+  -d DIRECTORY, --directory DIRECTORY
+                        Directory to export gifs to
+  --app-id APP_ID       Test credentials are used by default
+  --app-hash APP_HASH   Test credentials are used by default
 
-  -h  --help       Print help information
-  -d  --directory  Directory to export gifs to. Default: gifs
-      --app-id     Test credentials are used by default. Default: 17349
-      --app-hash   Test credentials are used by default. Default:
-                   344583e45741c457fe1862106095a5eb
+WARNING: this program uses a hack to get older gifs not visible from client: it temporarily removes newer gifs to get older ones. If something goes wrong (for example if program gets killed, power goes off or internet disconnects), removed gifs will be lost.
 ```

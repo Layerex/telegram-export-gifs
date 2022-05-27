@@ -9,7 +9,6 @@ import (
 
 	"github.com/3bl3gamer/tgclient/mtproto"
 	"github.com/adrg/xdg"
-	"github.com/akamensky/argparse"
 )
 
 const programName = "telegram-export-gifs"
@@ -59,7 +58,7 @@ func (t *Telegram) GetAllGifs(savedGifsLimit int, clearGifs bool) []mtproto.TL_d
 	interruptChan := make(chan os.Signal, 1)
 	signal.Notify(interruptChan, os.Interrupt)
 
-	fmt.Println("WARNING: this program uses a hack to get older gifs not visible from the client: it temporarily removes newer gifs to get older ones. If something goes wrong (for example if program gets killed, power goes off or internet disconnects), removed gifs will be lost")
+	fmt.Println("WARNING: this program uses a hack to get older gifs not visible from client: it temporarily removes newer gifs to get older ones. If something goes wrong (for example if program gets killed, power goes off or internet disconnects), removed gifs will be lost.")
 	for {
 		currentSavedGifs, err := t.GetCurrentGifs()
 		if err != nil {
@@ -91,32 +90,22 @@ func (t *Telegram) GetAllGifs(savedGifsLimit int, clearGifs bool) []mtproto.TL_d
 }
 
 func main() {
-	parser := argparse.NewParser(programName, "Export gifs from telegram")
-	directory := parser.String("d", "directory", &argparse.Options{Required: false, Default: "gifs", Help: "Directory to export gifs to"})
-	appID := parser.Int("", "app-id", &argparse.Options{Required: false, Default: 17349, Help: "Test credentials are used by default"})
-	appHash := parser.String("", "app-hash", &argparse.Options{Required: false, Default: "344583e45741c457fe1862106095a5eb", Help: "Test credentials are used by default"})
+	args := ParseArgs()
 
-	err := parser.Parse(os.Args)
-	if err != nil {
-		fmt.Print(parser.Usage(err))
-		os.Exit(2)
-	}
-
+	var t Telegram
+	t.AppID = int32(args.AppID)
+	t.AppHash = args.AppHash
 	sessionFilePath, err := xdg.DataFile(sessionFile)
 	if err != nil {
 		panic(err)
 	}
-
-	var t Telegram
-	t.AppID = int32(*appID)
-	t.AppHash = *appHash
 	t.SignIn(sessionFilePath)
 
-	err = os.MkdirAll(*directory, 0755)
+	err = os.MkdirAll(args.Directory, 0755)
 	if err != nil {
 		panic(err)
 	}
-	err = os.Chdir(*directory)
+	err = os.Chdir(args.Directory)
 	if err != nil {
 		panic(err)
 	}
