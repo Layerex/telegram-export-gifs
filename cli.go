@@ -6,8 +6,7 @@ import (
 	"strconv"
 )
 
-const helpMessage =
-`usage: %s [-h] [-d DIRECTORY] [--app-id APP_ID] [--app-hash APP_HASH]
+const helpMessage = `usage: %s [-h] [-d DIRECTORY] [--app-id APP_ID] [--app-hash APP_HASH]
 
 Export saved gifs from telegram.
 
@@ -22,9 +21,9 @@ WARNING: this program uses a hack to get older gifs not visible from client: it 
 `
 
 type Args struct {
-	Directory       string
-	AppID           int32
-	AppHash         string
+	Directory string
+	AppID     int32
+	AppHash   string
 }
 
 func ParseArgs() Args {
@@ -70,13 +69,13 @@ func ParseArgs() Args {
 		if args.AppHash != "" {
 			panic("--app-hash is provided, but --app-id isn't")
 		}
-		args.AppID = 17349;
+		args.AppID = 17349
 	}
 	if args.AppHash == "" {
 		if args.AppID == 0 {
 			panic("--app-id is provided, but --app-hash isn't")
 		}
-		args.AppHash = "344583e45741c457fe1862106095a5eb";
+		args.AppHash = "344583e45741c457fe1862106095a5eb"
 	}
 	return args
 }
