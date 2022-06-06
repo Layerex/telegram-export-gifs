@@ -92,15 +92,19 @@ func (t *Telegram) GetAllGifs(savedGifsLimit int, clearGifs bool) []mtproto.TL_d
 func main() {
 	args := ParseArgs()
 
-	sessionFilePath, err := xdg.DataFile(sessionFile)
-	if err != nil {
-		panic(err)
+	var sessionFilePath string
+	if !args.DontSaveSession {
+		var err error
+		sessionFilePath, err = xdg.DataFile(sessionFile)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	var t Telegram
 	t.SignIn(args.AppID, args.AppHash, sessionFilePath)
 
-	err = os.MkdirAll(args.Directory, 0755)
+	err := os.MkdirAll(args.Directory, 0755)
 	if err != nil {
 		panic(err)
 	}

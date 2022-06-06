@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
 	"strconv"
+
+	"github.com/adrg/xdg"
 )
 
-const helpMessage = `usage: %s [-h] [-d DIRECTORY] [--app-id APP_ID] [--app-hash APP_HASH]
+const helpMessage = `usage: %s [-h] [-d DIRECTORY] [--dont-save-session] [--app-id APP_ID] [--app-hash APP_HASH]
 
 Export saved gifs from telegram.
 
@@ -14,14 +17,18 @@ options:
   -h, --help            Show this help message and exit
   -d DIRECTORY, --directory DIRECTORY
                         Directory to export gifs to
+  --dont-save-session   Don't save session file (and don't use already saved one)
   --app-id APP_ID       Test credentials are used by default
   --app-hash APP_HASH   Test credentials are used by default
+
+Session file is saved to %s
 
 WARNING: this program uses a hack to get older gifs not visible from client: it temporarily removes newer gifs to get older ones. If something goes wrong (for example if program gets killed, power goes off or internet disconnects), removed gifs will be lost.
 `
 
 type Args struct {
 	Directory string
+	DontSaveSession bool
 	AppID     int32
 	AppHash   string
 }
@@ -63,8 +70,13 @@ func ParseArgs() Args {
 				panic("--app-hash value has to be a hex string of 32 characters")
 			}
 			args.AppHash = os.Args[i]
+		case "--dont-save-session":
+			if args.DontSaveSession {
+				panic("--dont-save-session option is provided more than one time")
+			}
+			args.DontSaveSession = true
 		case "-h", "--help":
-			fmt.Printf(helpMessage, os.Args[0])
+			fmt.Printf(helpMessage, os.Args[0], path.Join(xdg.DataHome, sessionFile))
 			os.Exit(0)
 		default:
 			panic(fmt.Sprintf("Unexpected argument: %s", os.Args[i]))
