@@ -37,7 +37,7 @@ func (t *Telegram) GetAllGifs(savedGifsLimit int, clearGifs bool) []mtproto.TL_d
 	savedGifs := make([]mtproto.TL_document, 0)
 	unsavedGifs := make([]mtproto.TL_inputDocument, 0)
 
-	resaveGifs := func() {
+	defer func() {
 		errorString := recover()
 		if errorString != nil {
 			fmt.Printf("Error when getting gifs: %s\n", errorString)
@@ -50,9 +50,7 @@ func (t *Telegram) GetAllGifs(savedGifsLimit int, clearGifs bool) []mtproto.TL_d
 				t.SaveGif(inputDocument, false) // Resave gif
 			}
 		}
-	}
-
-	defer resaveGifs()
+	}()
 
 	// Handle interrupts
 	interruptChan := make(chan os.Signal, 1)
@@ -67,24 +65,23 @@ func (t *Telegram) GetAllGifs(savedGifsLimit int, clearGifs bool) []mtproto.TL_d
 		for _, document := range currentSavedGifs {
 			savedGifs = append(savedGifs, document)
 		}
-		if len(currentSavedGifs) == savedGifsLimit { // if there is still max amount of gifs, there may be more
-			for i, document := range currentSavedGifs {
-				select {
-				case <-interruptChan:
-					return make([]mtproto.TL_document, 0)
-				default:
-					inputDocument := mtproto.TL_inputDocument{ID: document.ID, AccessHash: document.AccessHash, FileReference: document.FileReference}
-					// fmt.Println(inputDocument)
-					fmt.Printf("(%d/%d+) Unsaving gifs\n", len(savedGifs)-len(currentSavedGifs)+i+1, len(savedGifs))
-					unsavedGifs = append(unsavedGifs, inputDocument)
-					// Gifs can be lost that way, but i am too lazy to implement anything to recover them
-					t.SaveGif(inputDocument, true) // Temporarily unsave gif, so old gifs become visible
-				}
-			}
-		} else {
+		if len(currentSavedGifs) != savedGifsLimit { // if there is not max amount of gifs, there are no more
 			fmt.Printf("Unsaved %d gifs\n", len(savedGifs)-len(currentSavedGifs))
 			fmt.Printf("Got %d gifs\n", len(savedGifs))
 			return savedGifs
+		}
+		for i, document := range currentSavedGifs {
+			select {
+			case <-interruptChan:
+				return make([]mtproto.TL_document, 0)
+			default:
+				inputDocument := mtproto.TL_inputDocument{ID: document.ID, AccessHash: document.AccessHash, FileReference: document.FileReference}
+				// fmt.Println(inputDocument)
+				fmt.Printf("(%d/%d+) Unsaving gifs\n", len(savedGifs)-len(currentSavedGifs)+i+1, len(savedGifs))
+				unsavedGifs = append(unsavedGifs, inputDocument)
+				// Gifs can be lost that way, but i am too lazy to implement anything to recover them
+				t.SaveGif(inputDocument, true) // Temporarily unsave gif, so old gifs become visible
+			}
 		}
 	}
 }

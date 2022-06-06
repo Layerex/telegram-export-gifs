@@ -27,14 +27,13 @@ WARNING: this program uses a hack to get older gifs not visible from client: it 
 `
 
 type Args struct {
-	Directory string
+	Directory       string
 	DontSaveSession bool
-	AppID     int32
-	AppHash   string
+	AppID           int32
+	AppHash         string
 }
 
 func ParseArgs() Args {
-
 	var args Args
 	end := len(os.Args) - 1
 	for i := 1; i < len(os.Args); i++ {

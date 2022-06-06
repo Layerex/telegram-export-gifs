@@ -7,7 +7,6 @@ import (
 func EncodeBool(b bool) mtproto.TL {
 	if b {
 		return mtproto.TL_boolTrue{}
-	} else {
-		return mtproto.TL_boolFalse{}
 	}
+	return mtproto.TL_boolFalse{}
 }
