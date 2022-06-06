@@ -102,9 +102,12 @@ func main() {
 	}
 
 	var t Telegram
-	t.SignIn(args.AppID, args.AppHash, sessionFilePath)
+	err := t.SignIn(args.AppID, args.AppHash, sessionFilePath)
+	if err != nil {
+		panic(err)
+	}
 
-	err := os.MkdirAll(args.Directory, 0755)
+	err = os.MkdirAll(args.Directory, 0755)
 	if err != nil {
 		panic(err)
 	}
