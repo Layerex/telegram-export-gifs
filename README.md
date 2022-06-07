@@ -4,11 +4,11 @@ Export gifs from telegram
 
 **WARNING: this program uses a hack to get older gifs not visible from client: it temporarily removes newer gifs to get older ones. If something goes wrong (for example if program gets killed, power goes off or internet disconnects), removed gifs will be lost.**
 
-## Installation
+## Running
 
 ```sh
 go build
-sudo install telegram-export-gifs /usr/local/bin
+./telegram-export-gifs
 ```
 
 ## Usage
